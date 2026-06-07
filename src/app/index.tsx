@@ -12,7 +12,7 @@ import {
 } from "react-native";
 import HomeScreen from "./home";
 
-const API = "http://127.0.0.1:8000";
+const API = "https://backend-production-6077.up.railway.app";
 
 export default function LoginScreen() {
   const [screen, setScreen] = useState<"login" | "signup" | "forgot" | "reset" | "verify">("login");
