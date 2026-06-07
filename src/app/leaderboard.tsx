@@ -1,17 +1,31 @@
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useEffect, useState } from 'react';
+import { ActivityIndicator, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+
+const API = 'http://localhost:8000';
 
 export default function LeaderboardScreen({ onBack }: { onBack: () => void }) {
-  const topThree = [
-    { rank: 2, names: 'Мөнх & Сарнай', points: 280 },
-    { rank: 1, names: 'Анхаа & Зулаа', points: 340 },
-    { rank: 3, names: 'Бат & Оюу', points: 210 },
-  ];
+  const [board, setBoard] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const rest = [
-    { rank: 4, names: 'Тэмүүлэн & Эрдэнэ', points: 180, tasks: 5 },
-    { rank: 5, names: 'Наран & Дэлгэрмаа', points: 150, tasks: 4 },
-    { rank: 6, names: 'Ганбаяр & Амина', points: 120, tasks: 3 },
-  ];
+  useEffect(() => {
+    fetchLeaderboard();
+  }, []);
+
+  const fetchLeaderboard = async () => {
+    try {
+      const res = await fetch(`${API}/api/leaderboard/`);
+      const data = await res.json();
+      setBoard(data.leaderboard || []);
+    } catch (e) {}
+    setLoading(false);
+  };
+
+  const topThree = board.slice(0, 3);
+  const rest = board.slice(3);
+
+  const podiumOrder = topThree.length >= 3 
+    ? [topThree[1], topThree[0], topThree[2]] 
+    : topThree;
 
   return (
     <ScrollView style={styles.container}>
@@ -23,16 +37,22 @@ export default function LeaderboardScreen({ onBack }: { onBack: () => void }) {
         <Text style={styles.title}>Монголын эрхэм хосууд</Text>
         <Text style={styles.sub}>Тог оноогоор жагсаалт</Text>
 
-        <View style={styles.podium}>
-          {topThree.map((item, i) => (
-            <View key={i} style={[styles.podiumItem, item.rank === 1 && styles.podiumFirst]}>
-              {item.rank === 1 && <Text style={styles.crownSmall}>👑</Text>}
-              <Text style={styles.podiumRank}>{item.rank === 1 ? '1st' : item.rank === 2 ? '2nd' : '3rd'}</Text>
-              <Text style={styles.podiumName}>{item.names}</Text>
-              <Text style={styles.podiumPts}>{item.points}</Text>
-            </View>
-          ))}
-        </View>
+        {loading ? (
+          <ActivityIndicator color="#F5A623" style={{ marginTop: 20 }} />
+        ) : (
+          <View style={styles.podium}>
+            {podiumOrder.map((item, i) => (
+              <View key={i} style={[styles.podiumItem, item?.rank === 1 && styles.podiumFirst]}>
+                {item?.rank === 1 && <Text style={styles.crownSmall}>👑</Text>}
+                <Text style={styles.podiumRank}>
+                  {item?.rank === 1 ? '1st' : item?.rank === 2 ? '2nd' : '3rd'}
+                </Text>
+                <Text style={styles.podiumName}>{item?.members}</Text>
+                <Text style={styles.podiumPts}>{item?.tog_total}</Text>
+              </View>
+            ))}
+          </View>
+        )}
       </View>
 
       <View style={styles.list}>
@@ -40,13 +60,13 @@ export default function LeaderboardScreen({ onBack }: { onBack: () => void }) {
           <View key={i} style={styles.row}>
             <Text style={styles.rowNum}>{item.rank}</Text>
             <View style={styles.rowAvatar}>
-              <Text style={styles.rowAvatarText}>{item.names.charAt(0)}</Text>
+              <Text style={styles.rowAvatarText}>{item.members?.charAt(0)}</Text>
             </View>
             <View style={styles.rowInfo}>
-              <Text style={styles.rowName}>{item.names}</Text>
-              <Text style={styles.rowTasks}>{item.tasks} task биелүүлсэн</Text>
+              <Text style={styles.rowName}>{item.members}</Text>
+              <Text style={styles.rowTasks}>{item.tasks_completed} task биелүүлсэн</Text>
             </View>
-            <Text style={styles.rowScore}>{item.points} ⚡</Text>
+            <Text style={styles.rowScore}>{item.tog_total} ⚡</Text>
           </View>
         ))}
       </View>
@@ -57,11 +77,8 @@ export default function LeaderboardScreen({ onBack }: { onBack: () => void }) {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#F8F4FF' },
   header: {
-    backgroundColor: '#1A1035',
-    padding: 24, paddingTop: 48,
-    borderBottomLeftRadius: 24,
-    borderBottomRightRadius: 24,
-    alignItems: 'center',
+    backgroundColor: '#1A1035', padding: 24, paddingTop: 48,
+    borderBottomLeftRadius: 24, borderBottomRightRadius: 24, alignItems: 'center',
   },
   backBtn: { alignSelf: 'flex-start', marginBottom: 16 },
   backText: { color: 'rgba(255,255,255,0.6)', fontSize: 14 },
@@ -90,8 +107,7 @@ const styles = StyleSheet.create({
   rowNum: { fontSize: 13, fontWeight: '800', color: '#8A85A0', width: 20 },
   rowAvatar: {
     width: 36, height: 36, borderRadius: 18,
-    backgroundColor: '#6C3DE8',
-    alignItems: 'center', justifyContent: 'center', marginRight: 10,
+    backgroundColor: '#6C3DE8', alignItems: 'center', justifyContent: 'center', marginRight: 10,
   },
   rowAvatarText: { color: '#fff', fontSize: 14, fontWeight: '700' },
   rowInfo: { flex: 1 },

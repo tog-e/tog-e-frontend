@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import CompletionScreen from './completion';
+import IntroScreen from './intro';
 import LeaderboardScreen from './leaderboard';
 import MapsScreen from './maps';
+import ProfileScreen from './profile';
 import ScheduleScreen from './schedule';
 import TasksScreen from './tasks';
 const API = 'http://localhost:8000';
@@ -30,11 +32,18 @@ export default function HomeScreen({ userId, accountId }: { userId: number | nul
   };
 
   const fetchTasks = async () => {
+    if (!accountId) {
+      setLoading(false);
+      return;
+    }
     try {
       const res = await fetch(`${API}/api/tasks/daily/${accountId}`);
       const data = await res.json();
+      console.log('Tasks:', data);
       setTasks(data.tasks || []);
-    } catch (e) {}
+    } catch (e) {
+      console.log('Task error:', e);
+    }
     setLoading(false);
   };
 
@@ -42,6 +51,13 @@ export default function HomeScreen({ userId, accountId }: { userId: number | nul
   if (screen === 'tasks') return <TasksScreen onBack={() => setScreen('home')} />;
   if (screen === 'maps') return <MapsScreen onBack={() => setScreen('home')} />;
   if (screen === 'schedule') return <ScheduleScreen onBack={() => setScreen('home')} accountId={accountId} />;
+  if (screen === 'profile') return <ProfileScreen onBack={() => setScreen('home')} userId={userId} />;
+  if (screen === 'intro') return (
+    <IntroScreen
+      onFinish={() => setScreen('home')}
+      memberNames={account?.members?.map((m: any) => m.name) || ['Хэрэглэгч 1', 'Хэрэглэгч 2']}
+    />
+  );
   if (screen === 'completion' && selectedTask) return (
     <CompletionScreen
       task={selectedTask}
@@ -90,7 +106,11 @@ export default function HomeScreen({ userId, accountId }: { userId: number | nul
             </TouchableOpacity>
           ))
         )}
-
+        <TouchableOpacity style={styles.introBtn} onPress={() => setScreen('intro')}>
+          <Text style={styles.introBtnText}>👋 Танилцацгаая</Text>
+          <Text style={styles.introBtnSub}>14 асуулт — бие биенээ илүү таних</Text>
+        </TouchableOpacity>
+        
         <TouchableOpacity style={styles.scheduleBtn} onPress={() => setScreen('schedule')}>
           <Text style={styles.scheduleBtnText}>🗓️ 7 хоногийн цаг тохируулах</Text>
           <Text style={styles.scheduleBtnSub}>AI activity санал авах</Text>
@@ -107,6 +127,9 @@ export default function HomeScreen({ userId, accountId }: { userId: number | nul
         <TouchableOpacity style={[styles.navBtn, styles.navBtnDark, { marginTop: 0 }]} onPress={() => setScreen('leaderboard')}>
           <Text style={styles.navBtnText}>🏆 Тэргүүн жагсаалт</Text>
         </TouchableOpacity>
+        <TouchableOpacity style={[styles.navBtn, styles.navBtnDark, { marginTop: 10 }]} onPress={() => setScreen('profile')}>
+  <Text style={styles.navBtnText}>👤 Профайл тохируулах</Text>
+</TouchableOpacity>
       </View>
     </ScrollView>
   );
@@ -160,4 +183,11 @@ const styles = StyleSheet.create({
   },
   navBtnDark: { backgroundColor: '#2D1A6E' },
   navBtnText: { color: '#fff', fontSize: 13, fontWeight: '700' },
+  introBtn: {
+    backgroundColor: '#2D1A6E', borderRadius: 14, padding: 16,
+    alignItems: 'center', marginBottom: 10,
+    borderWidth: 0.5, borderColor: 'rgba(108,61,232,0.3)',
+  },
+  introBtnText: { color: '#fff', fontSize: 15, fontWeight: '700' },
+  introBtnSub: { color: 'rgba(255,255,255,0.4)', fontSize: 11, marginTop: 4 },
 });
