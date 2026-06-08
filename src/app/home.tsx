@@ -7,7 +7,7 @@ import MapsScreen from './maps';
 import ProfileScreen from './profile';
 import ScheduleScreen from './schedule';
 import TasksScreen from './tasks';
-const API = 'http://localhost:8000';
+const API = "https://backend-production-6077.up.railway.app";
 
 export default function HomeScreen({ userId, accountId }: { userId: number | null, accountId: number | null }) {
   const [screen, setScreen] = useState('home');
