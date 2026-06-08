@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { ActivityIndicator, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
-const API = 'http://localhost:8000';
+const API ='https://backend-production-6077.up.railway.app';
 
 export default function ProfileScreen({ 
   onBack, 

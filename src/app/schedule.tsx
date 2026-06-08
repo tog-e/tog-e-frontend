@@ -52,7 +52,7 @@ export default function ScheduleScreen({ onBack, accountId }: { onBack: () => vo
       return;
     }
     try {
-      const res = await fetch('http://localhost:8000/api/tasks/add-recommended', {
+      const res = await fetch('https://backend-production-6077.up.railway.app/api/tasks/add-recommended', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -119,7 +119,7 @@ ${partnerText || 'тодорхойгүй'}
 
     console.log(`${prompt}`)
     try {
-      const response = await fetch('http://localhost:8000/api/ai/recommend', {
+      const response = await fetch('https://backend-production-6077.up.railway.app/api/ai/recommend', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ prompt }),
