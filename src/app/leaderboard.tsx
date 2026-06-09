@@ -5,11 +5,11 @@ import { ActivityIndicator, ScrollView, StyleSheet, Text, TouchableOpacity, View
 const API = 'https://backend-production-6077.up.railway.app';
 
 const BADGES = [
-  { emoji: '👑', label: 'Үнэнч', color: '#FBBF24', desc: 'Тогтмол биелүүлэгч' },
-  { emoji: '💪', label: 'Эрч', color: '#F472B6', desc: 'Идэвхтэй хос' },
-  { emoji: '🌊', label: 'Урсгал', color: '#60A5FA', desc: 'Урт streak' },
-  { emoji: '⚡', label: 'Хүчирхэг', color: '#A78BFA', desc: 'Өндөр оноо' },
-  { emoji: '🏆', label: 'Шилдэг', color: '#34D399', desc: 'Тэргүүн хос' },
+  { emoji: '👑', label: 'Үнэнч', color: '#FBBF24' },
+  { emoji: '💪', label: 'Эерэг', color: '#F472B6' },
+  { emoji: '🌊', label: 'Усан дэвшилтэт', color: '#60A5FA' },
+  { emoji: '⚡', label: 'Хүчирхэг', color: '#A78BFA' },
+  { emoji: '🏆', label: 'Шилдэг', color: '#34D399' },
 ];
 
 const RANK_COLORS = ['#FBBF24', '#C0C0C0', '#CD7F32'];
@@ -40,16 +40,13 @@ export default function LeaderboardScreen({ onBack }: { onBack: () => void }) {
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-      {/* BACKGROUND TROPHY */}
-      <View style={styles.bgTrophyWrap}>
+      {/* BIG BACKGROUND TROPHY */}
+      <View style={styles.bgTrophyWrap} pointerEvents="none">
         <Text style={styles.bgTrophy}>🏆</Text>
       </View>
 
       {/* HEADER */}
-      <LinearGradient
-        colors={['#1A0A3E', '#0D0620', 'transparent']}
-        style={styles.header}
-      >
+      <LinearGradient colors={['#1A0A3E', '#0D0620', 'transparent']} style={styles.header}>
         <TouchableOpacity onPress={onBack} style={styles.backBtn}>
           <Text style={styles.backText}>← Буцах</Text>
         </TouchableOpacity>
@@ -57,7 +54,7 @@ export default function LeaderboardScreen({ onBack }: { onBack: () => void }) {
         <View style={styles.titleRow}>
           <View>
             <Text style={styles.title}>Тэргүүлэгчид</Text>
-            <Text style={styles.sub}>Монголын хамгийн эрхэм хосууд</Text>
+            <Text style={styles.sub}>Монголын хамгийн эерэг хос</Text>
           </View>
           <View style={styles.liveBadge}>
             <View style={styles.liveDot} />
@@ -65,21 +62,30 @@ export default function LeaderboardScreen({ onBack }: { onBack: () => void }) {
           </View>
         </View>
 
-        {/* BADGES ROW */}
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.badgesScroll}>
+        {/* BADGES — туг хэлбэрээр дээрээс унжиж байгаа мэт */}
+        <View style={styles.badgesRow}>
           {BADGES.map((badge, i) => (
-            <View key={i} style={[styles.badgeCard, { borderColor: badge.color + '40' }]}>
+            <View key={i} style={styles.badgeFlagWrap}>
+              {/* String/rope */}
+              <View style={[styles.badgeRope, { backgroundColor: badge.color + '60' }]} />
+              {/* Flag */}
               <LinearGradient
-                colors={[badge.color + '25', badge.color + '08']}
-                style={styles.badgeGradient}
+                colors={[badge.color + '35', badge.color + '15']}
+                style={[styles.badgeFlag, { borderColor: badge.color + '50' }]}
               >
-                <Text style={styles.badgeEmoji}>{badge.emoji}</Text>
-                <Text style={[styles.badgeLabel, { color: badge.color }]}>{badge.label}</Text>
-                <Text style={styles.badgeDesc}>{badge.desc}</Text>
+                <Text style={styles.badgeFlagEmoji}>{badge.emoji}</Text>
+                <Text style={[styles.badgeFlagLabel, { color: badge.color }]}>{badge.label}</Text>
+                {/* Shadow at bottom */}
+                <LinearGradient
+                  colors={['transparent', badge.color + '20']}
+                  style={styles.badgeFlagShadow}
+                />
               </LinearGradient>
+              {/* Bottom triangle point */}
+              <View style={[styles.badgeFlagPoint, { borderTopColor: badge.color + '35' }]} />
             </View>
           ))}
-        </ScrollView>
+        </View>
 
         {/* PODIUM */}
         {loading ? (
@@ -97,7 +103,11 @@ export default function LeaderboardScreen({ onBack }: { onBack: () => void }) {
                       <Text style={styles.crownEmoji}>👑</Text>
                     </View>
                   )}
-                  <View style={[styles.podiumAvatar, isFirst && styles.podiumAvatarFirst, { borderColor: RANK_COLORS[rankIdx] + '60' }]}>
+                  <View style={[
+                    styles.podiumAvatar,
+                    isFirst && styles.podiumAvatarFirst,
+                    { borderColor: RANK_COLORS[rankIdx] + '60' }
+                  ]}>
                     <Text style={styles.podiumAvatarText}>{item.members?.charAt(0)}</Text>
                     {isFirst && <View style={styles.podiumGlow} />}
                   </View>
@@ -160,37 +170,43 @@ export default function LeaderboardScreen({ onBack }: { onBack: () => void }) {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#080618' },
 
-  // BG TROPHY
   bgTrophyWrap: {
-    position: 'absolute', top: 60, right: -20,
-    zIndex: 0, opacity: 0.04,
+    position: 'absolute', top: 40, right: -30,
+    zIndex: 0, opacity: 0.05,
   },
-  bgTrophy: { fontSize: 280 },
+  bgTrophy: { fontSize: 300 },
 
-  // HEADER
   header: {
     paddingTop: 52, paddingHorizontal: 24,
     paddingBottom: 32, zIndex: 1,
   },
   backBtn: { marginBottom: 20 },
   backText: { color: 'rgba(255,255,255,0.5)', fontSize: 14 },
-  titleRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 20 },
+  titleRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 24 },
   title: { color: '#fff', fontSize: 26, fontWeight: '800' },
   sub: { color: 'rgba(255,255,255,0.4)', fontSize: 13, marginTop: 4 },
   liveBadge: { flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: 'rgba(52,211,153,0.15)', borderRadius: 20, paddingHorizontal: 10, paddingVertical: 5, borderWidth: 1, borderColor: 'rgba(52,211,153,0.3)' },
   liveDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: '#34D399' },
   liveText: { color: '#34D399', fontSize: 11, fontWeight: '700' },
 
-  // BADGES
-  badgesScroll: { marginBottom: 24 },
-  badgeCard: {
-    borderRadius: 16, marginRight: 10, overflow: 'hidden',
-    borderWidth: 1, width: 90,
+  // BADGE FLAGS
+  badgesRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 28, paddingHorizontal: 4 },
+  badgeFlagWrap: { alignItems: 'center', flex: 1 },
+  badgeRope: { width: 1.5, height: 16, marginBottom: 0 },
+  badgeFlag: {
+    width: '90%', borderRadius: 10, borderWidth: 1,
+    paddingVertical: 10, paddingHorizontal: 4,
+    alignItems: 'center', overflow: 'hidden', position: 'relative',
   },
-  badgeGradient: { padding: 12, alignItems: 'center' },
-  badgeEmoji: { fontSize: 24, marginBottom: 6 },
-  badgeLabel: { fontSize: 12, fontWeight: '800', marginBottom: 2 },
-  badgeDesc: { fontSize: 9, color: 'rgba(255,255,255,0.3)', textAlign: 'center' },
+  badgeFlagEmoji: { fontSize: 20, marginBottom: 4 },
+  badgeFlagLabel: { fontSize: 10, fontWeight: '800', textAlign: 'center', letterSpacing: 0.3 },
+  badgeFlagShadow: { position: 'absolute', bottom: 0, left: 0, right: 0, height: 20 },
+  badgeFlagPoint: {
+    width: 0, height: 0,
+    borderLeftWidth: 8, borderRightWidth: 8,
+    borderTopWidth: 10,
+    borderLeftColor: 'transparent', borderRightColor: 'transparent',
+  },
 
   // PODIUM
   podiumContainer: { flexDirection: 'row', alignItems: 'flex-end', gap: 6, paddingBottom: 4 },
@@ -211,8 +227,7 @@ const styles = StyleSheet.create({
   },
   podiumGlow: {
     position: 'absolute', top: -10, left: -10, right: -10, bottom: -10,
-    backgroundColor: 'rgba(251,191,36,0.15)',
-    borderRadius: 40,
+    backgroundColor: 'rgba(251,191,36,0.15)', borderRadius: 40,
   },
   podiumAvatarText: { color: '#fff', fontSize: 20, fontWeight: '800' },
   podiumNameText: { color: '#fff', fontSize: 10, fontWeight: '700', textAlign: 'center', marginBottom: 2, paddingHorizontal: 2 },
