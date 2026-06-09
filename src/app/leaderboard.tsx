@@ -7,7 +7,7 @@ const API = 'https://backend-production-6077.up.railway.app';
 const BADGES = [
   { emoji: '👑', label: 'Үнэнч', color: '#FBBF24' },
   { emoji: '💪', label: 'Эерэг', color: '#F472B6' },
-  { emoji: '🌊', label: 'Усан дэвшилтэт', color: '#60A5FA' },
+  { emoji: '🌊', label: 'Өсөн дэвшилтэт', color: '#60A5FA' },
   { emoji: '⚡', label: 'Хүчирхэг', color: '#A78BFA' },
   { emoji: '🏆', label: 'Шилдэг', color: '#34D399' },
 ];
