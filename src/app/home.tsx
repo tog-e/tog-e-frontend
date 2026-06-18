@@ -1,6 +1,7 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import ActivitiesScreen from './activities';
 import CompletionScreen from './completion';
 import IntroScreen from './intro';
 import JobsScreen from './jobs';
@@ -52,6 +53,7 @@ export default function HomeScreen({ userId, accountId }: { userId: number | nul
   if (screen === 'tasks') return <TasksScreen onBack={() => setScreen('home')} />;
   if (screen === 'maps') return <MapsScreen onBack={() => setScreen('home')} />;
   if (screen === 'jobs') return <JobsScreen onBack={() => setScreen('home')} />;
+  if (screen === 'activities') return <ActivitiesScreen onBack={() => setScreen('home')} />;
   if (screen === 'schedule') return <ScheduleScreen onBack={() => setScreen('home')} accountId={accountId} />;
   if (screen === 'profile') return <ProfileScreen onBack={() => setScreen('home')} userId={userId} />;
   if (screen === 'intro') return (
@@ -178,6 +180,15 @@ export default function HomeScreen({ userId, accountId }: { userId: number | nul
             <Text style={styles.quickTitle}>AI Schedule</Text>
             <Text style={styles.quickSub}>7 хоногийн санал</Text>
           </TouchableOpacity>
+        
+          <View style={styles.quickGrid}>
+            <TouchableOpacity style={[styles.quickCard, styles.qcPink]} onPress={() => setScreen('activities')} activeOpacity={0.75}>
+              <View style={[styles.quickIconWrap, { backgroundColor: 'rgba(255,107,157,0.2)', borderColor: 'rgba(255,107,157,0.3)' }]}>
+                <Text style={styles.quickEmoji}>🎯</Text>
+              </View>
+              <Text style={styles.quickTitle}>Activities</Text>
+              <Text style={styles.quickSub}>УБ хийх зүйлс</Text>
+            </TouchableOpacity>
 
           <TouchableOpacity style={[styles.quickCard, styles.qcPurple]} onPress={() => setScreen('jobs')} activeOpacity={0.75}>
             <View style={[styles.quickIconWrap, { backgroundColor: 'rgba(167,139,250,0.2)', borderColor: 'rgba(167,139,250,0.3)' }]}>
@@ -186,6 +197,15 @@ export default function HomeScreen({ userId, accountId }: { userId: number | nul
             <Text style={styles.quickTitle}>Ажлын зар</Text>
             <Text style={styles.quickSub}>Zangia.mn</Text>
           </TouchableOpacity>
+        </View>
+          
+
+
+
+
+
+
+
 
           <TouchableOpacity style={[styles.quickCard, styles.qcPink]} onPress={() => setScreen('intro')} activeOpacity={0.75}>
             <View style={[styles.quickIconWrap, { backgroundColor: 'rgba(255,107,157,0.2)', borderColor: 'rgba(255,107,157,0.3)' }]}>
